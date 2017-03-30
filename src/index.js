@@ -43,13 +43,19 @@
     arity = arity || f.length
     args = args || []
 
-    return function curried () {
-      var newArgs = args.concat(Array.prototype.slice.call(arguments))
+    return setProp('name', partialName(f, args),
+      setProp('length', arity, function curried () {
+        var newArgs = args.concat(Array.prototype.slice.call(arguments))
 
-      return newArgs.length === arity
-        ? R.apply(f, newArgs)
-        : funCurry(f, arity, newArgs)
-    }
+        return newArgs.length === arity
+          ? R.apply(f, newArgs)
+          : setProp('length', arity - newArgs.length, funCurry(f, arity, newArgs))
+      })
+    )
+  }
+
+  function partialName (f, args) {
+    return f.name + '(' + args + ')'
   }
 
   /**
@@ -74,6 +80,18 @@
         ? R.call(f, newOptions)
         : curryOptions(f, keys, newOptions)
     }
+  }
+
+  function setProp (prop, value, target) {
+    return Object.defineProperty(
+      target,
+      prop,
+      Object.defineProperty(
+        Object.getOwnPropertyDescriptor(target, prop),
+        'value',
+        { value: value }
+      )
+    )
   }
 })()
 
