@@ -40,8 +40,8 @@
     "tap": "^8.0.1"
   },
   "dependencies": {
-    "fun-assert": "^0.12.0",
-    "guarded": "^0.5.2",
+    "fun-assert": "latest",
+    "guarded": "latest",
     "ramda": "^0.23.0",
     "stringify-anything": "latest"
   }
