@@ -1,6 +1,6 @@
 {
   "name": "fun-curry",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "((a1, a2, ..., an) -> x) -> (a1 -> a2 -> ... -> an -> x)",
   "main": "src/index.js",
   "scripts": {
