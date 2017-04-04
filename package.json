@@ -42,6 +42,7 @@
   "dependencies": {
     "fun-assert": "^0.11.2",
     "guarded": "^0.4.1",
-    "ramda": "^0.23.0"
+    "ramda": "^0.23.0",
+    "set-prop": "^0.1.0"
   }
 }
