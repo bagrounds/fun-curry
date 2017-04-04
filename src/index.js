@@ -9,7 +9,6 @@
   var guarded = require('guarded')
   var funAssert = require('fun-assert')
   var R = require('ramda')
-  var setProp = require('set-prop')
   var stringify = require('stringify-anything')
 
   var isFunction = funAssert.type('Function')
@@ -86,6 +85,10 @@
         ? R.call(f, newOptions)
         : curryOptions(f, keys, newOptions)
     }
+  }
+
+  function setProp (key, value, target) {
+    return Object.defineProperty(target, key, { value: value })
   }
 })()
 
