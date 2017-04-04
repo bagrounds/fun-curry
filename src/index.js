@@ -51,7 +51,11 @@
 
         return newArgs.length === arity
           ? R.apply(f, newArgs)
-          : setProp('length', arity - newArgs.length, funCurry(f, arity, newArgs))
+          : setProp(
+            'length',
+            arity - newArgs.length,
+            funCurry(f, arity, newArgs)
+          )
       })
     )
   }
