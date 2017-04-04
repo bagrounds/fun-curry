@@ -10,6 +10,7 @@
   var funAssert = require('fun-assert')
   var R = require('ramda')
   var setProp = require('set-prop')
+  var stringify = require('stringify-anything')
 
   var isFunction = funAssert.type('Function')
   var isNumber = funAssert.type('Number')
@@ -56,7 +57,7 @@
   }
 
   function partialName (f, args) {
-    return f.name + '(' + args + ')'
+    return stringify(f) + '(' + stringify(args) + ')'
   }
 
   /**
