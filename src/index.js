@@ -18,17 +18,17 @@
   var isObject = funAssert.type('Object')
 
   /* exports */
-  module.exports = guarded({
+  module.exports = setProp('name', 'curry', guarded({
     inputs: [isFunction, isNumber, isArray],
     f: funCurry,
     output: isFunction
-  })
+  }))
 
-  module.exports.options = guarded({
+  module.exports.options = setProp('name', 'curryOptions', guarded({
     inputs: [isFunction, isStringArray, isObject],
     f: curryOptions,
     output: isFunction
-  })
+  }))
 
   /**
    *
@@ -48,7 +48,7 @@
       setProp('length', arity, function curried () {
         var newArgs = args.concat(Array.prototype.slice.call(arguments))
 
-        return newArgs.length === arity
+        return newArgs.length >= arity
           ? R.apply(f, newArgs)
           : setProp(
             'length',
@@ -81,7 +81,7 @@
 
       console.log(newOptions)
 
-      return R.difference(keys, R.keys(newOptions)).length === 0
+      return R.difference(keys, R.keys(newOptions)).length >= 0
         ? R.call(f, newOptions)
         : curryOptions(f, keys, newOptions)
     }
