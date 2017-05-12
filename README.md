@@ -12,7 +12,7 @@
 
 ## [Test Coverage](https://bagrounds.gitlab.io/fun-curry/coverage/lcov-report/index.html)
 
-## [API Docs](https://bagrounds.gitlab.io/fun-curry/docs/index.html)
+## [API Docs](https://bagrounds.gitlab.io/fun-curry/index.html)
 
 ## Dependencies
 
