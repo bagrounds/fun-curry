@@ -6,85 +6,70 @@
   'use strict'
 
   /* imports */
-  var guarded = require('guarded')
-  var funAssert = require('fun-assert')
-  var R = require('ramda')
-  var stringify = require('stringify-anything')
-
-  var isFunction = funAssert.type('Function')
-  var isNumber = funAssert.type('Number')
-  var isArray = funAssert.type('Array')
-  var isStringArray = funAssert.type('[String]')
-  var isObject = funAssert.type('Object')
+  var stringify = require('./lib/stringify-anything')
 
   /* exports */
-  module.exports = setProp('name', 'curry', guarded({
-    inputs: [isFunction, isNumber, isArray],
-    f: funCurry,
-    output: isFunction
-  }))
-
-  module.exports.options = setProp('name', 'curryOptions', guarded({
-    inputs: [isFunction, isStringArray, isObject],
-    f: curryOptions,
-    output: isFunction
-  }))
+  module.exports = curry
 
   /**
    *
-   * @function module:fun-curry.funCurry
+   * @function module:fun-curry.curry
    *
-   * @param {Function} f - to curry
+   * @param {Function} f - function to curry
    * @param {Number} [arity] - number of arguments f should accept
    * @param {Array} [args] - initial arguments to apply
    *
    * @return {Function} a_1 -> a_2 -> ... -> a_arity -> f(a_1, ..., a_arity)
    */
-  function funCurry (f, arity, args) {
+  function curry (f, arity, args) {
     arity = arity || f.length
     args = args || []
 
-    return setProp('name', partialName(f, args),
-      setProp('length', arity, function curried () {
-        var newArgs = args.concat(Array.prototype.slice.call(arguments))
+    checkInputs(f, arity, args)
+
+    return setProp('name', partialName(f, args, arity),
+      setProp('length', arity, function () {
+        var newPartialArgs = Array.prototype.slice.call(arguments)
+
+        var newArgs = args.concat(
+          newPartialArgs.length ? newPartialArgs : [undefined]
+        )
 
         return newArgs.length >= arity
-          ? R.apply(f, newArgs)
-          : setProp(
-            'length',
-            arity - newArgs.length,
-            funCurry(f, arity, newArgs)
-          )
+          ? f.apply(null, newArgs)
+          : setProp('length', arity - newArgs.length, curry(f, arity, newArgs))
       })
     )
   }
 
-  function partialName (f, args) {
-    return stringify(f) + '(' + stringify(args) + ')'
+  function checkInputs (f, arity, args) {
+    if (typeof f !== 'function') {
+      throw Error(stringify(f) + ' should be a function')
+    }
+
+    if (typeof arity !== 'number') {
+      throw Error(stringify(arity) + ' should be a number')
+    }
+
+    if (!(args instanceof Array)) {
+      throw Error(stringify(args) + ' should be an Array')
+    }
   }
 
-  /**
-   *
-   * @function module:fun-curry.options
-   *
-   * @param {Function} f - to curry
-   * @param {Array<String>} keys - all keys required prior to executing f
-   * @param {Object} [options] - initial options to apply
-   *
-   * @return {Function} { k1 } -> { k2 } -> ... -> f({ k1, k2, ... })
-   */
-  function curryOptions (f, keys, options) {
-    options = options || {}
+  function partialName (f, args, n) {
+    return f.name
+      ? f.name + stringifyArgs(args, n)
+      : stringifyArgs(args, n) + '=>'
+  }
 
-    return function optionsCurried (partialOptions) {
-      var newOptions = R.merge(options, partialOptions)
-
-      console.log(newOptions)
-
-      return R.difference(keys, R.keys(newOptions)).length >= 0
-        ? R.call(f, newOptions)
-        : curryOptions(f, keys, newOptions)
-    }
+  function stringifyArgs (args, n) {
+    return '(' + args
+      .map(stringify)
+      .concat(
+        Array.apply(null, { length: n - args.length }).map(function () {
+          return ''
+        })
+      ).join(',') + ')'
   }
 
   function setProp (key, value, target) {

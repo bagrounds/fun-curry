@@ -33,16 +33,15 @@
   },
   "homepage": "https://gitlab.com/bagrounds/fun-curry#README",
   "devDependencies": {
-    "eslint": "^3.12.2",
+    "eslint": "^3.19.0",
+    "fun-apply": "^0.2.0",
+    "fun-compose": "^0.3.3",
+    "fun-predicate": "^0.15.3",
+    "fun-test": "^0.22.1",
+    "fun-test-runner": "^0.8.1",
     "jsdoc": "^3.4.3",
     "madge": "^1.6.0",
     "showdown": "^1.5.4",
-    "tap": "^8.0.1"
-  },
-  "dependencies": {
-    "fun-assert": "latest",
-    "guarded": "latest",
-    "ramda": "^0.23.0",
-    "stringify-anything": "latest"
+    "tap": "^10.3.2"
   }
 }
