@@ -18,7 +18,8 @@
     "predocument": "rm -rf docs",
     "document": "jsdoc -c .jsdoc.json",
     "browserify": "browserify dist/entry.js --no-bf | uglifyjs > dist/bundle.js",
-    "readme": "cat readme/* > README.md"
+    "readme": "cat readme/* > README.md",
+    "next-update": "next-update -k true --tldr"
   },
   "repository": {
     "type": "git",
@@ -35,18 +36,19 @@
   },
   "homepage": "https://gitlab.com/bagrounds/fun-curry#README",
   "devDependencies": {
-    "eslint": "^3.19.0",
-    "fun-apply": "^0.2.0",
-    "fun-compose": "^0.3.3",
-    "fun-predicate": "^0.15.3",
-    "fun-test": "^0.22.1",
-    "fun-test-runner": "^0.8.1",
-    "jsdoc": "^3.4.3",
-    "madge": "^1.6.0",
-    "showdown": "^1.5.4",
-    "tap": "^10.3.2",
-    "browserify": "^14.3.0",
+    "browserify": "^14.5.0",
     "docdash": "^0.4.0",
-    "uglify-js": "^3.0.3"
+    "eslint": "4.14.0",
+    "fun-apply": "^0.2.2",
+    "fun-compose": "^0.3.3",
+    "fun-predicate": "0.16.0",
+    "fun-test": "^0.24.1",
+    "fun-test-runner": "^0.9.1",
+    "jsdoc": "^3.5.5",
+    "madge": "2.2.0",
+    "next-update": "^3.6.0",
+    "showdown": "^1.8.6",
+    "tap": "11.0.1",
+    "uglify-js": "^3.3.4"
   }
 }

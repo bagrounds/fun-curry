@@ -36,13 +36,7 @@
       return '[' + anything.map(stringify).join(',') + ']'
     }
 
-    return '{' +
-      zipWith(
-        join,
-        Object.keys(anything),
-        values(anything).map(stringify)
-      ).join(',') +
-      '}'
+    return '{' + Object.keys(anything).join(',') + '}'
   }
 
   function isPrimitive (x) {
@@ -56,22 +50,6 @@
     return Array.apply(null, { length: n }).map(function () {
       return s
     })
-  }
-
-  function zipWith (f, a1, a2) {
-    return a1.map(function (e, i) {
-      return f(e, a2[i])
-    })
-  }
-
-  function values (object) {
-    return Object.keys(object).map(function (key) {
-      return object[key]
-    })
-  }
-
-  function join (key, value) {
-    return key + ':' + value
   }
 })()
 
