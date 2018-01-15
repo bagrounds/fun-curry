@@ -2,14 +2,33 @@
  *
  * @module fun-curry
  */
-;(function () {
+;(() => {
   'use strict'
 
   /* imports */
-  var stringify = require('./lib/stringify-anything')
+  const stringify = require('stringify-anything')
 
-  /* exports */
-  module.exports = curry
+  const setProp = (key, value, x) => Object.defineProperty(x, key, { value })
+  const setName = (n, x) => setProp('name', n, x)
+  const setLength = (n, x) => setProp('length', n, x)
+  const toss = msg => { throw Error(msg) }
+
+  const checkInputs = (f, arity, args) => {
+    if (!(typeof f === 'function')) {
+      toss(`${stringify(f)} should be a function`)
+    }
+
+    if (!(typeof arity === 'number')) {
+      toss(`${stringify(arity)} should be a number`)
+    }
+
+    if (!(args instanceof Array)) {
+      toss(`${stringify(args)} should be an Array`)
+    }
+  }
+
+  const partialName = (f, args) => stringify(f) +
+    (!args.length ? '' : `(${args.map(stringify).join(',')})`)
 
   /**
    *
@@ -21,59 +40,25 @@
    *
    * @return {Function} a_1 -> a_2 -> ... -> a_arity -> f(a_1, ..., a_arity)
    */
-  function curry (f, arity, args) {
-    arity = arity || f.length
-    args = args || []
-
+  const curry = (f, arity = f.length, args = []) => {
     checkInputs(f, arity, args)
 
-    return setProp('name', partialName(f, args, arity),
-      setProp('length', arity, function () {
-        var newPartialArgs = Array.prototype.slice.call(arguments)
+    return setName(
+      partialName(f, args),
+      setLength(
+        arity,
+        (...partialArgs) => {
+          const newArgs = args
+            .concat(partialArgs.length ? partialArgs : [undefined])
 
-        var newArgs = args.concat(
-          newPartialArgs.length ? newPartialArgs : [undefined]
-        )
-
-        return newArgs.length >= arity
-          ? f.apply(null, newArgs)
-          : setProp('length', arity - newArgs.length, curry(f, arity, newArgs))
-      })
+          return newArgs.length >= arity
+            ? f.apply(null, newArgs)
+            : setLength(arity - newArgs.length, curry(f, arity, newArgs))
+        })
     )
   }
 
-  function checkInputs (f, arity, args) {
-    if (typeof f !== 'function') {
-      throw Error(stringify(f) + ' should be a function')
-    }
-
-    if (typeof arity !== 'number') {
-      throw Error(stringify(arity) + ' should be a number')
-    }
-
-    if (!(args instanceof Array)) {
-      throw Error(stringify(args) + ' should be an Array')
-    }
-  }
-
-  function partialName (f, args, n) {
-    return f.name
-      ? f.name + stringifyArgs(args, n)
-      : stringifyArgs(args, n) + '=>'
-  }
-
-  function stringifyArgs (args, n) {
-    return '(' + args
-      .map(stringify)
-      .concat(
-        Array.apply(null, { length: n - args.length }).map(function () {
-          return ''
-        })
-      ).join(',') + ')'
-  }
-
-  function setProp (key, value, target) {
-    return Object.defineProperty(target, key, { value: value })
-  }
+  /* exports */
+  module.exports = curry
 })()
 

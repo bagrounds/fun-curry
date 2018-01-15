@@ -1,97 +1,84 @@
-;(function () {
+;(() => {
   'use strict'
 
   /* imports */
-  var predicate = require('fun-predicate')
-  var funTest = require('fun-test')
-  var compose = require('fun-compose')
-  var apply = require('fun-apply')
+  const { equalDeep, throwsWith } = require('fun-predicate')
+  const funTest = require('fun-test')
+  const compose = require('fun-compose')
+  const apply = require('fun-apply')
+  const type = require('fun-type')
 
-  function arrayOf (x) {
-    return [x]
-  }
+  const arrayOf = x => [x]
+  const pair = (a, b) => [a, b]
+  const k = x => () => x
 
-  function pair (a, b) {
-    return [a, b]
-  }
-
-  function k (x) {
-    return function () {
-      return x
-    }
-  }
-
-  /* exports */
   module.exports = [
-    {
-      inputs: [pair, 2, ['a']],
-      predicate: compose(predicate.equalDeep(['a', 'b']), apply(['b']))
-    },
-    {
-      inputs: [pair, 2],
-      predicate: compose(predicate.equalDeep(['a', 'b']), apply(['a', 'b']))
-    },
-    {
-      inputs: [arrayOf],
-      predicate: compose(predicate.equalDeep([undefined]), apply([]))
-    },
-    {
+    [
+      [pair, 2, ' '],
+      [pair, ' '],
+      ['']
+    ].map(p => ({
       inputs: [],
-      predicate: predicate.throwsWith([pair, 2, ' ']),
+      predicate: throwsWith(p),
       contra: k
-    },
-    {
-      inputs: [],
-      predicate: predicate.throwsWith([pair, ' ']),
-      contra: k
-    },
-    {
-      inputs: [],
-      predicate: predicate.throwsWith(['']),
-      contra: k
-    },
-    {
-      inputs: [arrayOf],
-      predicate: compose(
-        predicate.type('[Function]'),
-        apply([function () {}])
-      )
-    },
-    {
-      inputs: [arrayOf],
-      predicate: compose(
-        predicate.equalDeep([['a', 2, true, null, { a: undefined }, pair]]),
-        apply([['a', 2, true, null, { a: undefined }, pair]])
-      )
-    },
-    {
-      inputs: [function () {}, 3, [{ a: [] }]],
-      predicate: compose(predicate.type('Function'), apply([]))
-    },
-    {
-      inputs: [
-        Math.pow,
-        3,
-        [[['a', 2, true, null, { a: undefined }, /^.$/, pair, function () {},
-          Error('!'), { a: {} }]]]
-      ],
-      predicate: compose(predicate.type('Function'), apply([]))
-    },
-    {
-      inputs: [Math.pow],
-      predicate: compose(predicate.equal(8), apply([2, 3]))
-    },
-    {
-      inputs: [Math.pow],
-      predicate: compose(predicate.type('Function'), apply([3]))
-    },
-    {
-      inputs: [Math.pow],
-      predicate: compose(
-        predicate.equal(9),
-        compose(apply([2]), apply([3]))
-      )
-    }
-  ].map(funTest.sync)
+    })),
+    [
+      {
+        inputs: [pair, 2, ['a']],
+        predicate: compose(equalDeep(['a', 'b']), apply(['b']))
+      },
+      {
+        inputs: [pair, 2],
+        predicate: compose(equalDeep(['a', 'b']), apply(['a', 'b']))
+      },
+      {
+        inputs: [arrayOf],
+        predicate: compose(equalDeep([undefined]), apply([]))
+      },
+      {
+        inputs: [arrayOf],
+        predicate: compose(
+          type.arrayOf(type.fun),
+          apply([x => x])
+        )
+      },
+      {
+        inputs: [arrayOf],
+        predicate: compose(
+          equalDeep([['a', 2, true, null, { a: undefined }, pair]]),
+          apply([['a', 2, true, null, { a: undefined }, pair]])
+        )
+      },
+      {
+        inputs: [x => x, 3, [{ a: [] }]],
+        predicate: compose(type.fun, apply([]))
+      },
+      {
+        inputs: [
+          Math.pow,
+          3,
+          [[['a', 2, true, null, { a: undefined }, /^.$/, pair, x => x,
+            Error('!'), { a: {} }]]]
+        ],
+        predicate: compose(type.fun, apply([]))
+      },
+      {
+        inputs: [Math.pow],
+        predicate: compose(equalDeep(8), apply([2, 3]))
+      },
+      {
+        inputs: [Math.pow],
+        predicate: compose(type.fun, apply([3]))
+      },
+      {
+        inputs: [Math.pow],
+        predicate: compose(
+          equalDeep(9),
+          compose(apply([2]), apply([3]))
+        )
+      }
+    ]
+  ].reduce((a, b) => a.concat(b))
+    .map(funTest.sync)
 })()
 
